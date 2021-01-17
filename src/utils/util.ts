@@ -5,7 +5,6 @@ import { render } from 'mustache';
 import { commands, Position, Uri, window, workspace, WorkspaceEdit } from "vscode";
 
 import { NestAssociatedArrayEnum, NestFileOption, NestFileType, NestImports, NestProviders } from './../model/nest';
-import { getPackedSettings } from "http2";
 export async function getFileTemplate(file: NestFileOption): Promise<string> {
 	return fs.readFile(join(__dirname, `../../src/templates/${NestFileType[file.type].toLowerCase()}.mustache`), 'utf8').then(data => {
 		const name = getClassName(file.name);
