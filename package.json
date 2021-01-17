@@ -1,7 +1,7 @@
 {
 	"name": "nestjs-tool",
-	"displayName": "nestjs-tool",
-	"description": "nestjs file tools",
+	"displayName": "NestJS Tool",
+	"description": "Quickly create NestJS Files tool",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.52.0"
@@ -9,9 +9,14 @@
 	"categories": [
 		"Other"
 	],
+	"icon": "images/icon.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/czfadmin/nestjs-tool"
+	},
+	"bugs": {
+		"url": "https://github.com/czfadmin/nestjs-tool/issues",
+		"email": "www.2849007069@outlook.com"
 	},
 	"activationEvents": [
 		"onCommand:extension.GenerateNestJsModule",
