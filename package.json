@@ -1,0 +1,167 @@
+{
+	"name": "nestjs-tool",
+	"displayName": "nestjs-tool",
+	"description": "nestjs file tools",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/czfadmin/nestjs-tool"
+	},
+	"activationEvents": [
+		"onCommand:extension.GenerateNestJsModule",
+		"onCommand:extension.GenerateNestJsService",
+		"onCommand:extension.GenerateNestJsController",
+		"onCommand:extension.GenerateNestJsException",
+		"onCommand:extension.GenerateNestJsMiddleware",
+		"onCommand:extension.GenerateNestJsInterceptor",
+		"onCommand:extension.GenerateNestJsPipe",
+		"onCommand:extension.GenerateNestJsGuard",
+		"onCommand:extension.GenerateNestJsDecorator",
+		"onCommand:extension.GenerateNestJsExcepFilter",
+		"onCommand:extension.GenerateNestJsUnitTest"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"configuration": {
+			"title": "nestjs-tool"
+		},
+		"commands": [
+			{
+				"command": "extension.GenerateNestJsModule",
+				"title": "NestJSTool - Generate Module"
+			},
+			{
+				"command": "extension.GenerateNestJsService",
+				"title": "NestJSTool - Generate Service"
+			},
+			{
+				"command": "extension.GenerateNestJsController",
+				"title": "NestJSTool - Generate Controller"
+			},
+			{
+				"command": "extension.GenerateNestJsException",
+				"title": "NestJSTool - Generate Exception"
+			},
+			{
+				"command": "extension.GenerateNestJsMiddleware",
+				"title": "NestJSTool - Generate Middleware"
+			},
+			{
+				"command": "extension.GenerateNestJsInterceptor",
+				"title": "NestJSTool - Generate Interceptor"
+			},
+			{
+				"command": "extension.GenerateNestJsPipe",
+				"title": "NestJSTool - Generate Pipe"
+			},
+			{
+				"command": "extension.GenerateNestJsGuard",
+				"title": "NestJSTool - Generate Guard"
+			},
+			{
+				"command": "extension.GenerateNestJsDecorator",
+				"title": "NestJSTool - Generate Decorator"
+			},
+			{
+				"command": "extension.GenerateNestJsExcepFilter",
+				"title": "NestJSTool - Generate Exception Filter"
+			},
+			{
+				"command": "extension.GenerateNestJsUnittest",
+				"title": "NestJSTool - Generate Unit Test"
+			}
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "extension.GenerateNestJsModule",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsService",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsController",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsException",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsMiddleware",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsInterceptor",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsPipe",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsGuard",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsDecorator",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsExcepFilter",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestJsUnittest",
+					"when": "!explorerResourceIsFolder",
+					"group": "2_workspace"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.52.0",
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "^12.11.7",
+		"@types/fs-extra": "^9.0.6",
+		"@types/mustache": "^4.1.0",
+		"eslint": "^7.15.0",
+		"@typescript-eslint/eslint-plugin": "^4.9.0",
+		"@typescript-eslint/parser": "^4.9.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"typescript": "^4.1.2",
+		"vscode-test": "^1.4.1"
+	},
+	"dependencies": {
+		"fs-extra": "^9.0.1",
+		"mustache": "^4.1.0"
+	}
+}
