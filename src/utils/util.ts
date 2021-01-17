@@ -6,7 +6,7 @@ import { commands, Position, Uri, window, workspace, WorkspaceEdit } from "vscod
 
 import { NestAssociatedArrayEnum, NestFileOption, NestFileType, NestImports, NestProviders } from './../model/nest';
 export async function getFileTemplate(file: NestFileOption): Promise<string> {
-	return fs.readFile(join(__dirname, `../../src/templates/${NestFileType[file.type].toLowerCase()}.mustache`), 'utf8').then(data => {
+	return fs.readFile(join(__dirname, `../templates/${NestFileType[file.type].toLowerCase()}.mustache`), 'utf8').then(data => {
 		const name = getClassName(file.name);
 		const type = getPascalCase(basename(file.uri.path).split('.')[1]);
 		let view = {
@@ -87,7 +87,7 @@ export async function addToArray(data: Uint8Array, file: NestFileOption, moduleP
 }
 
 export async function getImportTemplate(file: NestFileOption, appModule: Uri): Promise<string> {
-	return fs.readFile(join(__dirname, `../../src/templates/import.mustache`), 'utf8')
+	return fs.readFile(join(__dirname, `../templates/import.mustache`), 'utf8')
 		.then((data) => {
 			let view = {
 				Name: getClassName(file.name) + getPascalCase(file.type),

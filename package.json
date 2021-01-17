@@ -3,7 +3,7 @@
 	"displayName": "NestJS Tool",
 	"publisher": "czfadmin",
 	"description": "Quickly create NestJS Files tool",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -149,7 +149,8 @@
 		"watch": "tsc -watch -p ./",
 		"pretest": "npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"test": "node ./out/test/runTest.js",
+		"package": "cp -r src/templates ./out && vsce package"
 	},
 	"devDependencies": {
 		"@types/vscode": "^1.52.0",

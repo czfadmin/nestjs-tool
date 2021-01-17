@@ -44,7 +44,6 @@ function validFileInput(input: string): boolean {
 	if (!invalidFileName.test(input)) {
 		return true;
 	} else {
-		// TODO: 空格
 		input = input.trim();
 		if (input.includes(' ')) {
 			return true;
