@@ -3,7 +3,7 @@
 	"displayName": "NestJS Tool",
 	"publisher": "czfadmin",
 	"description": "Quickly create NestJS Files tool",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"engines": {
 		"vscode": "^1.52.0"
 	},

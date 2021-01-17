@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "nestjs-tool" is now active!');
 
-	let createModuleCommand = utils.buildCommand('extension.GenerateNestJsModule', NestFileType.MODULES, NestAssociatedArrayEnum.IMPORTS);
+	let createModuleCommand = utils.buildCommand('extension.GenerateNestJsModule', NestFileType.MODULE, NestAssociatedArrayEnum.IMPORTS);
 	let createServiceCommand = utils.buildCommand('extension.GenerateNestJsService', NestFileType.SERVICE, NestAssociatedArrayEnum.PROVIDERS);
 	let createControllerCommand = utils.buildCommand('extension.GenerateNestJsController', NestFileType.CONTROLLER, NestAssociatedArrayEnum.CONTROLLERS);
 	let createExceptionCommand = utils.buildCommand('extension.GenerateNestJsException', NestFileType.EXCEPTION);
@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let createGuardCommand = utils.buildCommand('extension.GenerateNestJsGuard', NestFileType.GUARD);
 	let createDecoratorCommand = utils.buildCommand('extension.GenerateNestJsDecorator', NestFileType.DECORATOR);
 	let createExceptionFilterCommand = utils.buildCommand('extension.GenerateNestJsExcepFilter', NestFileType.FILTER, NestAssociatedArrayEnum.PROVIDERS);
-	let createUnittestCommand = utils.buildCommand('extension.GenerateNestJsUnittest', NestFileType.MODULES);
+	let createUnittestCommand = utils.buildCommand('extension.GenerateNestJsUnittest', NestFileType.SPEC);
 	context.subscriptions.push(
 		createModuleCommand,
 		createServiceCommand,

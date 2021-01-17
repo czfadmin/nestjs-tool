@@ -18,7 +18,7 @@ export enum NestAssociatedArrayEnum {
 }
 
 export enum NestFileType {
-	MODULES = 0x01,
+	MODULE = 0x01,
 	CONTROLLER,
 	SERVICE,
 	EXCEPTION,
