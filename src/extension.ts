@@ -11,7 +11,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "nestjs-tool" is now active!');
 
 	let createModuleCommand = utils.buildCommand('extension.GenerateNestJsModule', NestFileType.MODULE, NestAssociatedArrayEnum.IMPORTS);
 	let createServiceCommand = utils.buildCommand('extension.GenerateNestJsService', NestFileType.SERVICE, NestAssociatedArrayEnum.PROVIDERS);
@@ -24,6 +23,8 @@ export function activate(context: vscode.ExtensionContext) {
 	let createDecoratorCommand = utils.buildCommand('extension.GenerateNestJsDecorator', NestFileType.DECORATOR);
 	let createExceptionFilterCommand = utils.buildCommand('extension.GenerateNestJsExcepFilter', NestFileType.FILTER, NestAssociatedArrayEnum.PROVIDERS);
 	let createUnittestCommand = utils.buildCommand('extension.GenerateNestJsUnittest', NestFileType.SPEC);
+
+	let createModuleFolderCommand = utils.buildCommand('extension.GenerateNestModuleFolder', NestFileType.MODULE_FOLDER);
 	context.subscriptions.push(
 		createModuleCommand,
 		createServiceCommand,
@@ -35,7 +36,8 @@ export function activate(context: vscode.ExtensionContext) {
 		createGuardCommand,
 		createDecoratorCommand,
 		createExceptionFilterCommand,
-		createUnittestCommand
+		createUnittestCommand,
+		createModuleFolderCommand,
 	);
 }
 

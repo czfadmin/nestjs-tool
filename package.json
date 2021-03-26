@@ -3,7 +3,7 @@
 	"displayName": "NestJS Tool",
 	"publisher": "czfadmin",
 	"description": "Quickly create NestJS Files tool",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"engines": {
 		"vscode": "^1.52.0"
 	},
@@ -17,7 +17,7 @@
 	},
 	"bugs": {
 		"url": "https://github.com/czfadmin/nestjs-tool/issues",
-		"email": "www.2849007069@outlook.com"
+		"email": "abchen9527@outlook.com"
 	},
 	"activationEvents": [
 		"onCommand:extension.GenerateNestJsModule",
@@ -30,7 +30,8 @@
 		"onCommand:extension.GenerateNestJsGuard",
 		"onCommand:extension.GenerateNestJsDecorator",
 		"onCommand:extension.GenerateNestJsExcepFilter",
-		"onCommand:extension.GenerateNestJsUnitTest"
+		"onCommand:extension.GenerateNestJsUnitTest",
+		"onCommand:extension.GenerateNestModuleFolder"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -81,12 +82,21 @@
 			{
 				"command": "extension.GenerateNestJsUnittest",
 				"title": "NestJSTool - Generate Unit Test"
+			},
+			{
+				"command": "extension.GenerateNestModuleFolder",
+				"title": "NestJSTool - Generate Module Folder"
 			}
 		],
 		"menus": {
 			"explorer/context": [
 				{
 					"command": "extension.GenerateNestJsModule",
+					"when": "explorerResourceIsFolder",
+					"group": "2_workspace"
+				},
+				{
+					"command": "extension.GenerateNestModuleFolder",
 					"when": "explorerResourceIsFolder",
 					"group": "2_workspace"
 				},

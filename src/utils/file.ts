@@ -3,7 +3,7 @@ import { join, basename } from "path";
 import { TextEncoder } from "util";
 import * as fs from 'fs-extra';
 
-import { NestFileOption, NestFileType } from "../model";
+import { NestAssociatedArrayEnum, NestFileOption, NestFileType } from "../model";
 import { addToArray, formatTextDocument, getFileTemplate } from './util';
 
 
@@ -45,8 +45,6 @@ export function buildFullName(fileName: string, fileType: NestFileType): string 
 	return `${fileName.toLowerCase()}.${extType.toLowerCase()}.ts`;
 }
 
-
-
 async function addFilesToAppModule(option: NestFileOption) {
 	let moduleFile: Uri[] = [];
 	if (option.type === NestFileType.SERVICE || option.type === NestFileType.CONTROLLER) {
@@ -66,4 +64,52 @@ async function addFilesToAppModule(option: NestFileOption) {
 	}
 }
 
+export async function createModuleFolder(option: NestFileOption) {
+	if (fs.existsSync(join(option.uri.fsPath, option.name))) {
+		return window.showErrorMessage(`The file or folder ${option.name} already exists at this location.Please choose a different name or choose a different location.`)
+	}
+	fs.mkdirSync(join(option.uri.fsPath, option.name));
 
+	const stats = await workspace.fs.stat(option.uri);
+	if (stats.type === FileType.Directory) {
+		option.uri = Uri.parse(`${option.uri.path}/${option.name}`);
+	} else {
+		return window.showErrorMessage(`Please choose a folder!`);
+	}
+
+	let tasks = [];
+	let fileExtTypes = [NestFileType.CONTROLLER, NestFileType.SERVICE, NestFileType.MODULE]
+	for (let idx in fileExtTypes) {
+		let fullName = buildFullName(option.name, fileExtTypes[idx]);
+		let opt: NestFileOption = {
+			name: option.name,
+			uri: option.uri,
+			type: NestFileType.UNDEFIND,
+			fullName: fullName,
+			associatedArray: NestAssociatedArrayEnum.UNDEFIND
+		}
+		switch (fileExtTypes[idx]) {
+			case NestFileType.CONTROLLER:
+				opt.type = NestFileType.CONTROLLER;
+				opt.associatedArray = NestAssociatedArrayEnum.CONTROLLERS;
+				break;
+			case NestFileType.SERVICE:
+				opt.type = NestFileType.SERVICE;
+				opt.associatedArray = NestAssociatedArrayEnum.PROVIDERS;
+				break;
+			case NestFileType.MODULE:
+				opt.type = NestFileType.MODULE;
+				opt.associatedArray = NestAssociatedArrayEnum.PROVIDERS;
+				break;
+		}
+		// await ;
+		tasks.push(createFile(opt));
+	}
+	return Promise.all(tasks).then((data) => {
+		console.log(data)
+	}).catch(() => {
+		return true;
+	}).catch(error => {
+		console.log(error)
+	});
+}

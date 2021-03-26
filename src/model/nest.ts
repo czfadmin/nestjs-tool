@@ -29,6 +29,8 @@ export enum NestFileType {
 	DECORATOR,
 	FILTER,
 	SPEC,
+	MODULE_FOLDER,
+	UNDEFIND
 }
 
 export const NestImports = {

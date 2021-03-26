@@ -1,18 +1,27 @@
 import { commands, Uri, window, workspace } from 'vscode';
 
 import { NestAssociatedArrayEnum, NestFileType } from './../model/nest';
-import { buildFileName, buildFullName, createFile, invalidFileName } from './file';
+import { buildFileName, buildFullName, createFile, createModuleFolder, invalidFileName } from './file';
 export function buildCommand(command: string, fileType: NestFileType, associatedArray: NestAssociatedArrayEnum = NestAssociatedArrayEnum.UNDEFIND) {
 	return commands.registerCommand(command, (resource: Uri) => {
 		if (checkWorkspace()) {
 			return window.showInputBox({
-				placeHolder: "please enter module name!"
+				placeHolder: "please enter name!"
 			}).then<any>(input => {
 				if (input === undefined) {
 					return;
 				}
 				if (validFileInput(input)) {
 					let fileName = buildFileName(input);
+					if (NestFileType.MODULE_FOLDER === fileType) {
+						return createModuleFolder({
+							name:fileName,
+							type: fileType,
+							associatedArray: NestAssociatedArrayEnum.UNDEFIND,
+							uri: resource,
+							fullName:fileName
+						});
+					}
 					let fullName = buildFullName(fileName, fileType);
 					return createFile({
 						name: fileName,
@@ -22,7 +31,7 @@ export function buildCommand(command: string, fileType: NestFileType, associated
 						fullName: fullName,
 					});
 				} else {
-					return window.showErrorMessage('Invaild filename');
+					return window.showErrorMessage('Invalid Filename');
 				}
 			})
 		}
