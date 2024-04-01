@@ -4,21 +4,45 @@ import {
   ExtensionContext,
   l10n,
   Terminal,
+  Uri,
   window,
 } from 'vscode';
 import {ServiceManager} from './service-manager';
-import {EXTENSION_ID, EXTENSION_TERMINAL_NAME} from '../constants';
+import {
+  COMMON_COMMANDS,
+  EXTENSION_ID,
+  EXTENSION_TERMINAL_NAME,
+} from '../constants';
 import {COMMANDS} from '../constants';
+import {
+  getModulesQuickPick,
+  getProjectFromUri,
+  resolve,
+  showCommandsQuickPick,
+  showProjectQuickPick,
+} from '../utils';
+import {IModule, INestApplication, INestProject} from '../types';
+import {
+  getApplicationFromUri,
+  showApplicationQuickPick,
+} from '../utils/application';
+import {LoggerService} from './logger-service';
 
 export default class CommandService implements Disposable {
   private _context: ExtensionContext;
 
   private _terminal: Terminal;
 
+  private _logger: LoggerService;
+  private get configuration() {
+    return this.sm.configService.configuration;
+  }
+
   constructor(private sm: ServiceManager) {
     const {shouldExecute} = this.sm.configService.configuration;
 
     this._context = this.sm.context;
+    this._logger = LoggerService.createFactory(CommandService);
 
     this._terminal =
       window.terminals.find(it => it.name == EXTENSION_TERMINAL_NAME) ||
@@ -33,32 +57,143 @@ export default class CommandService implements Disposable {
   private _initial() {
     const self = this;
     COMMANDS.forEach(cmd => {
-      const {callback: _callback, ...rest} = cmd;
+      const {postExecute: callback, ...rest} = cmd;
       const options = {...rest, logger: self.sm.logger};
-      this.registerCommand(options.name, async (ctx, args) => {
+      this.registerCommand(options.name, async (...args: any[]) => {
+        const meta = args.length === 1 ? args[0] : null;
+        let userInput: string | undefined = '';
+        let selectedModule: IModule | undefined = undefined;
+        let application: INestApplication | undefined = undefined;
+        let project: INestProject | undefined = undefined;
+        let from: any;
+        const cmdCtx = {
+          fileUri: 'fsPath' in args[0] ? args[0] : undefined,
+          command: cmd,
+          extensionCtx: self._context,
+        };
+        if (cmd.preExecute) {
+          await cmd.preExecute(cmdCtx);
+        }
+
+        if (meta) {
+          application = meta.application;
+          project = meta.project;
+          from = meta.from;
+        } else {
+          // 获取当前文件所在的应用
+          const fileUri = args[0] as Uri;
+
+          if (cmd.preValidate && !cmd.preValidate(cmdCtx, cmd)) {
+            return;
+          }
+
+          application = await getApplicationFromUri(fileUri);
+          project = await getProjectFromUri(fileUri, application);
+
+          if (!project && application) {
+            project = await showProjectQuickPick(application);
+          }
+        }
+
         if (options.needInput) {
-          const userInput = await this.showInputBox(
-            options.alias,
-            ctx,
-            ...args,
-          );
+          userInput = await this._showInputBox(options.description);
           if (!userInput || !userInput.length) {
             return;
           }
 
-          // const result = await _callback(ctx, options, userInput);
-          // if (result) {
-          // }
-          self._executeCommand(options.alias, userInput);
-        } else {
-          self._executeCommand(options.alias);
+          if (!userInput) {
+            return;
+          }
         }
+
+        // 从app中选取模块进行将生成的文件添加到指定的模块中
+        selectedModule = await getModulesQuickPick(application!, project);
+        userInput = this._buildCommand(userInput, project, selectedModule);
+
+        if (cmd.validateUserInput) {
+          const isValid = await cmd.validateUserInput(cmdCtx, userInput);
+          if (!isValid) {
+            return;
+          }
+        }
+
+        self._executeCommand(application!, options.alias, userInput);
+      });
+    });
+
+    COMMON_COMMANDS.forEach(cmd => {
+      const {callback, ...rest} = cmd;
+      const options = {...rest, logger: self.sm.logger};
+      this.registerCommand(options.name, async (...args: any[]) => {
+        const selectedApplication: INestApplication | undefined =
+          await showApplicationQuickPick();
+
+        const selectedProject: INestProject | undefined | null =
+          await showProjectQuickPick(selectedApplication!);
+
+        const meta = await showCommandsQuickPick();
+
+        if (!meta) return;
+
+        commands.executeCommand(`${EXTENSION_ID}.${meta.name}`, {
+          ...meta,
+          application: selectedApplication,
+          project: selectedProject,
+          from: cmd.name,
+        });
       });
     });
   }
 
-  async showInputBox(alias: string, ...args: any[]) {
+  /**
+   * 判断用户的输入内容,并结合用户的配置,生成最终的命令
+   * @param userInput 用户输入的内容
+   * @returns 处理后的用户输入
+   */
+  private _buildCommand(
+    userInput: string,
+    project?: INestProject,
+    module?: IModule,
+  ) {
+    let _userInput = userInput.trim();
+    const {flat, noSpec, noFlat, skipImport, spec} = this.configuration;
+
+    // 追加到指定的项目中
+    if (project) {
+      _userInput = _userInput + ` --project ${project.name}`;
+    }
+
+    // 在指定的module中生成对应的文件
+    if (!_userInput.startsWith('-') && module && module.name) {
+      _userInput = `${module.name}/${_userInput}`;
+    }
+
+    if (!_userInput.includes('flat') && flat) {
+      _userInput = _userInput + ` --flat`;
+    }
+
+    if (!_userInput.includes('--no-flat') && noFlat) {
+      _userInput = _userInput + ` --no-flat`;
+    }
+
+    if (!_userInput.includes('skipImport') && skipImport) {
+      _userInput = _userInput + ` --skip-import`;
+    }
+
+    if (!_userInput.includes('--no-spec') && noSpec) {
+      _userInput = _userInput + ` --no-spec`;
+    }
+
+    if (!_userInput.includes('spec') && spec) {
+      _userInput = _userInput + ` --spec`;
+    }
+
+    return _userInput;
+  }
+
+  private async _showInputBox(title: string) {
     const input = await window.showInputBox({
+      title: title,
       placeHolder: l10n.t(
         'Please enter the name and optional parameters, separated by spaces, such as: application --dry-run',
       ),
@@ -70,16 +205,19 @@ export default class CommandService implements Disposable {
     return input;
   }
 
-  registerCommand(
-    name: string,
-    callback: (ctx: ExtensionContext, ...args: any[]) => void,
-  ) {
+  registerCommand(name: string, callback: (...args: any[]) => void) {
     this._context.subscriptions.push(
-      commands.registerCommand(`${EXTENSION_ID}.${name}`, callback),
+      commands.registerCommand(`${EXTENSION_ID}.${name}`, (...args: any[]) => {
+        callback(...args);
+      }),
     );
   }
 
-  private _executeCommand(alias: string, ...args: any[]) {
+  private _executeCommand(
+    application: INestApplication,
+    alias: string,
+    ...args: any[]
+  ) {
     const {showTerminal, shouldExecute} = this.sm.configService.configuration;
     if (
       this._terminal.exitStatus &&
@@ -90,10 +228,19 @@ export default class CommandService implements Disposable {
         hideFromUser: shouldExecute,
       });
     }
-    this._terminal.sendText(`nest g ${alias} ${args.join(' ')}`);
+    let sendText = `nest g ${alias} ${args.join(' ')}`;
+    if (application) {
+      const distPath = resolve(
+        application.workspace.uri.fsPath,
+        application.name === 'root' ? '' : application.name,
+      );
+      sendText = `cd ${distPath} && ${sendText}`;
+    }
+    this._terminal.sendText(sendText);
     if (showTerminal) {
       this._terminal.show();
     }
+    this._logger.info(`execute command: ${sendText}`);
   }
 
   dispose() {

@@ -1,4 +1,8 @@
 {
+  "Please select a module": "Please select a module",
+  "Please select an app": "Please select an app",
+  "Please select a app": "Please select a app",
+  "Please select a operation": "Please select a operation",
   "Please enter the name and optional parameters, separated by spaces, such as: application --dry-run": "Please enter the name and optional parameters, separated by spaces, such as: application --dry-run",
   "Canceled": "Canceled",
   "Generate a new application workspace": "Generate a new application workspace",

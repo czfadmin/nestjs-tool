@@ -22,7 +22,10 @@
     "email": "abchen9527@outlook.com"
   },
   "activationEvents": [
-    "onStartupFinished"
+    "workspaceContains:**/nest-cli.json",
+    "workspaceContains:**/.nest-cli.json",
+    "workspaceContains:**/.nest-cli.json",
+    "workspaceContains:**/nest.json"
   ],
   "main": "./dist/extension.js",
   "l10n": "./l10n",
@@ -158,6 +161,11 @@
         "command": "nestjs-tool.generateANewApplicationWithAMonorepo",
         "title": "%nestjs-tool.generateANewApplicationWithAMonorepo%",
         "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.quickOperation",
+        "title": "%nestjs-tool.quickOperation%",
+        "category": "NestJS Tool"
       }
     ],
     "menus": {
@@ -171,7 +179,7 @@
       "nestjs-tool-menus": [
         {
           "command": "nestjs-tool.generateANewApplicationWorkspace",
-          "when": "explorerResourceIsFolder",
+          "when": "explorerResourceIsFolder ",
           "group": "2_workspace"
         },
         {
@@ -259,6 +267,12 @@
           "when": "explorerResourceIsFolder",
           "group": "2_workspace"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "nestjs-tool.generateACliConfigurationFile",
+          "when": "!nestjs-tool.selectedModule || !nestjs-tool.selectedProject || !nestjs-tool.selectedApp"
+        }
       ]
     },
     "submenus": [
@@ -284,10 +298,14 @@
     "publish:beta": "vsce package --pre-release",
     "publish": "vsce publish",
     "lint-staged": "lint-staged",
-    "l10n": "node ./node_modules/@vscode/l10n-dev/dist/cli.js export -o ./l10n ./src"
+    "l10n": "node ./node_modules/@vscode/l10n-dev/dist/cli.js export -o ./l10n ./src",
+    "release": "release-it"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^19.2.1",
+    "@commitlint/config-angular": "^19.1.0",
+    "@release-it/conventional-changelog": "^8.0.1",
     "@swc/core": "^1.4.8",
     "@types/fs-extra": "^9.0.6",
     "@types/glob": "^8.1.0",
@@ -304,16 +322,18 @@
     "lint-staged": "^15.2.2",
     "mocha": "^8.1.3",
     "prettier": "^3.2.5",
+    "release-it": "^17.1.1",
     "swc-loader": "^0.2.6",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
     "typescript": "^4.1.2",
     "vscode-test": "^1.4.1",
-    "webpack": "^5.90.3"
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@nestjs/cli": "^10.3.2",
     "fs-extra": "^9.0.1",
-    "mustache": "^4.1.0",
-    "webpack-cli": "^5.1.4"
+    "mustache": "^4.1.0"
   },
   "license": "MIT",
   "packageManager": "yarn@1.22.19"

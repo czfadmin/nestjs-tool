@@ -17,6 +17,7 @@
   "nestjs-tool.generateANewCRUDDeclaration": "Generate a new CRUD declaration",
   "nestjs-tool.generateAServiceDeclaration": "Generate a service declaration",
   "nestjs-tool.generateANewApplicationWithAMonorepo": "Generate a new application with a monorepo",
+  "nestjs-tool.quickOperation": "快速操作",
   "nestjs-tool.showTerminal": "当将命令发送到Terminal实例后, 是否显示Terminal, 默认为True",
   "nestjs-tool.shouldExecute": "指示应执行正在发送的文本，而不仅仅是将其插入终端中。 添加的字符为 \n 或 \r\n，具体取决于平台。 默认为 true",
   "nestjs-tool.noSpec": "Disable spec files generation",

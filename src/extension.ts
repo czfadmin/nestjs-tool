@@ -1,4 +1,5 @@
-import {ExtensionContext, window, workspace} from 'vscode';
+
+import { ExtensionContext, window, workspace ,extensions} from 'vscode';
 import {ServiceManager} from './services';
 export function activate(context: ExtensionContext) {
   if (!workspace.workspaceFolders) {

@@ -8,6 +8,8 @@ const fs = require('node:fs');
 const pkgInfo = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, 'package.json')).toString(),
 );
+
+const isProduction = process.env.NODE_ENV === 'production';
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
 
@@ -33,18 +35,33 @@ const extensionConfig = {
   },
   module: {
     rules: [
-      {
-        test: /\.m?ts$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'swc-loader',
-        },
-      },
+      isProduction
+        ? {
+            test: /\.m?ts$/,
+            exclude: /(node_modules)/,
+            use: {
+              loader: 'swc-loader',
+            },
+          }
+        : {
+            test: /\.ts$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: 'ts-loader',
+                options: {
+                  compilerOptions: {
+                    module: 'es6', // override `tsconfig.json` so that TypeScript emits native JavaScript modules.
+                  },
+                },
+              },
+            ],
+          },
     ],
   },
-  devtool: 'nosources-source-map',
+  devtool: 'source-map',
   infrastructureLogging: {
-    level: 'error', // enables logging required for problem matchers
+    level: 'info', // enables logging required for problem matchers
   },
   plugins: [
     new DefinePlugin({

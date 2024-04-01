@@ -27,7 +27,7 @@ export interface ExtConfiguration {
   noFlat: boolean;
 
   /**
-   *  Enforce flat structure of generated element
+   *  Enforce flat structure of generated element. (default: false)
    */
   flat: boolean;
 
@@ -36,4 +36,11 @@ export interface ExtConfiguration {
    * @default false
    */
   skipImport: boolean;
+}
+
+export interface IContextKey {
+  actived: boolean;
+  selectedModule: boolean;
+  selectedProject: boolean;
+  selectedApp: boolean;
 }

@@ -11,7 +11,7 @@ export default class OutputService implements Disposable {
     this._context = this.sm.context;
   }
 
-  info(msg: string, args: any[]) {
+  info(msg: string, ...args: any[]) {
     this.output.info(msg, args);
   }
 

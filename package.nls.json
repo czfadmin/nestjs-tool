@@ -17,6 +17,7 @@
   "nestjs-tool.generateANewCRUDDeclaration": "Generate a new CRUD declaration",
   "nestjs-tool.generateAServiceDeclaration": "Generate a service declaration",
   "nestjs-tool.generateANewApplicationWithAMonorepo": "Generate a new application with a monorepo",
+  "nestjs-tool.quickOperation": "Quick operation",
   "nestjs-tool.showTerminal": "When a command is sent to a Terminal instance, whether to display Terminal, the default is True",
   "nestjs-tool.shouldExecute": "Indicates that the text being sent should be executed rather than just inserted in the terminal. The character(s) added are \n or \r\n, depending on the platform. This defaults to true",
   "nestjs-tool.noSpec": "Disable spec files generation",

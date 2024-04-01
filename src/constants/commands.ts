@@ -1,12 +1,19 @@
-import { ExtensionContext, l10n } from 'vscode';
-import {CommandType, NestGenerateAlias} from '../types/command';
-export const COMMANDS: CommandType[] = [
+import {l10n, Uri, window} from 'vscode';
+import {
+  CommandContext,
+  INestCommand,
+  ICommonCommand,
+  NestGenerateAlias,
+} from '../types/command';
+import {judgeFolderIsApplication} from '../utils/application';
+export const COMMANDS: INestCommand[] = [
   {
     name: 'generateANewApplicationWorkspace',
     needInput: true,
     alias: NestGenerateAlias.APPLICATION_WORKSPACE,
     description: l10n.t('Generate a new application workspace'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -15,7 +22,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.CLASS,
     needInput: true,
     description: l10n.t('Generate a new class'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -24,7 +31,22 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.CONFIG,
     needInput: false,
     description: l10n.t('Generate a new cli configuration file'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    preValidate: (ctx, ...args): boolean => {
+      // 当从菜单上下文中创建 config 文件时,判断当前是否为 nest应用, 如果是,直接提示用户不可以先进行创建配置文件
+      const fileUri = ctx.fileUri as Uri;
+      const cmd = args[0] as INestCommand;
+      if (
+        cmd.alias === NestGenerateAlias.CONFIG &&
+        judgeFolderIsApplication(fileUri)
+      ) {
+        window.showInformationMessage(
+          l10n.t("Can't create config file in nest application"),
+        );
+        return false;
+      }
+      return true;
+    },
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -33,7 +55,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.CONTROLLER,
     needInput: true,
     description: l10n.t('Generate a new controller declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -42,7 +64,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.DECORATOR,
     needInput: true,
     description: l10n.t('Generate a new custom decorator'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -51,7 +73,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.FILTER,
     needInput: true,
     description: l10n.t('Generate a new filter declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -60,7 +82,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.GATEWAY,
     needInput: true,
     description: l10n.t('Generate a new gateway declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -69,7 +91,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.GUARD,
     needInput: true,
     description: l10n.t('Generate a new guard declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -78,7 +100,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.INTERCEPTOR,
     needInput: true,
     description: l10n.t('Generate a new interceptor declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -87,7 +109,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.INTERFACE,
     needInput: true,
     description: l10n.t('Generate a new interface'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -96,7 +118,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.LIBRARY,
     needInput: true,
     description: l10n.t('Generate a new library with a monorepo'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -105,7 +127,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.MIDDLEWARE,
     needInput: true,
     description: l10n.t('Generate a new middleware declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -114,7 +136,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.MODULE,
     needInput: true,
     description: l10n.t('Generate a new module declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -123,7 +145,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.PIPE,
     needInput: true,
     description: l10n.t('Generate a new pipe declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -132,7 +154,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.PROVIDER,
     needInput: true,
     description: l10n.t('Generate a new provider declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -141,7 +163,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.GRAPHQL_RESOLVER,
     needInput: true,
     description: l10n.t('Generate a new GraphQL resolver declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -150,7 +172,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.CRUD_DECLARATION,
     needInput: true,
     description: l10n.t('Generate a new CRUD declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -159,7 +181,7 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.SERVICE,
     needInput: true,
     description: l10n.t('Generate a new service declaration'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
   },
@@ -168,8 +190,16 @@ export const COMMANDS: CommandType[] = [
     alias: NestGenerateAlias.APPLICATION_MONOREPO,
     needInput: true,
     description: l10n.t('Generate a new application with a monorepo'),
-    callback: async (ctx: ExtensionContext, ...args: any[]) => {
+    postExecute: async (ctx: CommandContext, ...args: any[]) => {
       return undefined;
     },
+  },
+];
+
+export const COMMON_COMMANDS: ICommonCommand[] = [
+  {
+    name: 'quickOperation',
+    description: 'Quick operation',
+    callback(...args) {},
   },
 ];

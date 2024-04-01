@@ -51,8 +51,8 @@ export class ConfigService implements Disposable {
       shouldExecute: this._getItemByKey('shouldExecute', true),
       noSpec: this._getItemByKey('noSpec', false),
       spec: this._getItemByKey('spec', true),
-      noFlat: this._getItemByKey('noFlat', false),
-      flat: this._getItemByKey('flat', true),
+      noFlat: this._getItemByKey('noFlat', true),
+      flat: this._getItemByKey('flat', false),
       skipImport: this._getItemByKey('skipImport', false),
     };
 
