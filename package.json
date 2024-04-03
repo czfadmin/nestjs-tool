@@ -340,6 +340,7 @@
   "packageManager": "yarn@1.22.19",
   "lint-staged": {
     "*.{js,ts}": [
+      "yarn lint",
       "prettier --write"
     ]
   }
