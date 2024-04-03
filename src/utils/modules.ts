@@ -46,11 +46,18 @@ export function getAllModules(
 }
 
 export function getModulePickItems(modules: IModule[]): QuickPickItem[] {
-  return modules.map(module => ({
-    label: module.name,
-    description: module.project ? module.project.name : '',
-    detail: module.moduleEntry,
-  }));
+  return [
+    {
+      label: 'None',
+      description: 'None',
+      detail: l10n.t('Do not select submodules and create them directly'),
+    },
+    ...modules.map(module => ({
+      label: module.name,
+      description: module.project ? module.project.name : '',
+      detail: module.moduleEntry,
+    })),
+  ];
 }
 
 export function getModuleFromUri(uri: Uri) {}

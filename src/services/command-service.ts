@@ -21,7 +21,13 @@ import {
   showCommandsQuickPick,
   showProjectQuickPick,
 } from '../utils';
-import {IModule, INestApplication, INestProject} from '../types';
+import {
+  IModule,
+  INestApplication,
+  INestCommand,
+  INestProject,
+  NestGenerateAlias,
+} from '../types';
 import {
   getApplicationFromUri,
   showApplicationQuickPick,
@@ -60,6 +66,7 @@ export default class CommandService implements Disposable {
       const {postExecute: callback, ...rest} = cmd;
       const options = {...rest, logger: self.sm.logger};
       this.registerCommand(options.name, async (...args: any[]) => {
+        const isConfigCmd = cmd.alias === NestGenerateAlias.CONFIG;
         const meta = args.length === 1 ? args[0] : null;
         let userInput: string | undefined = '';
         let selectedModule: IModule | undefined = undefined;
@@ -83,15 +90,18 @@ export default class CommandService implements Disposable {
           // 获取当前文件所在的应用
           const fileUri = args[0] as Uri;
 
-          if (cmd.preValidate && !cmd.preValidate(cmdCtx, cmd)) {
+          if (cmd.preValidate && !(await cmd.preValidate(cmdCtx, cmd))) {
             return;
           }
 
           application = await getApplicationFromUri(fileUri);
-          project = await getProjectFromUri(fileUri, application);
+          
+          if (!isConfigCmd) {
+            project = await getProjectFromUri(fileUri, application);
 
-          if (!project && application) {
-            project = await showProjectQuickPick(application);
+            if (!project && application) {
+              project = await showProjectQuickPick(application);
+            }
           }
         }
 
@@ -106,9 +116,17 @@ export default class CommandService implements Disposable {
           }
         }
 
-        // 从app中选取模块进行将生成的文件添加到指定的模块中
-        selectedModule = await getModulesQuickPick(application!, project);
-        userInput = this._buildCommand(userInput, project, selectedModule);
+        if (!isConfigCmd) {
+          // 从app中选取模块进行将生成的文件添加到指定的模块中
+          selectedModule = await getModulesQuickPick(application!, project);
+
+          userInput = this._buildCommand(
+            cmd,
+            userInput,
+            project,
+            selectedModule,
+          );
+        }
 
         if (cmd.validateUserInput) {
           const isValid = await cmd.validateUserInput(cmdCtx, userInput);
@@ -151,6 +169,7 @@ export default class CommandService implements Disposable {
    * @returns 处理后的用户输入
    */
   private _buildCommand(
+    cmd: INestCommand,
     userInput: string,
     project?: INestProject,
     module?: IModule,
@@ -158,13 +177,22 @@ export default class CommandService implements Disposable {
     let _userInput = userInput.trim();
     const {flat, noSpec, noFlat, skipImport, spec} = this.configuration;
 
+    if (cmd.alias === NestGenerateAlias.CONFIG) {
+      return _userInput;
+    }
+
     // 追加到指定的项目中
     if (project) {
       _userInput = _userInput + ` --project ${project.name}`;
     }
 
     // 在指定的module中生成对应的文件
-    if (!_userInput.startsWith('-') && module && module.name) {
+    if (
+      !_userInput.startsWith('-') &&
+      module &&
+      module.name &&
+      module.name !== 'None'
+    ) {
       _userInput = `${module.name}/${_userInput}`;
     }
 

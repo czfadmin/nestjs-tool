@@ -31,7 +31,7 @@ export const COMMANDS: INestCommand[] = [
     alias: NestGenerateAlias.CONFIG,
     needInput: false,
     description: l10n.t('Generate a new cli configuration file'),
-    preValidate: (ctx, ...args): boolean => {
+    preValidate: async (ctx, ...args): Promise<boolean> => {
       // 当从菜单上下文中创建 config 文件时,判断当前是否为 nest应用, 如果是,直接提示用户不可以先进行创建配置文件
       const fileUri = ctx.fileUri as Uri;
       const cmd = args[0] as INestCommand;

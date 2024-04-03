@@ -57,9 +57,9 @@ export interface INestCommand extends IBaseCommon {
     | ((ctx: CommandContext, ...args: any[]) => Promise<any | undefined>)
     | undefined;
 
-  preValidate?: (ctx: CommandContext, ...args: any[]) => Promise<boolean> | boolean;
+  preValidate?: (ctx: CommandContext, ...args: any[]) => Promise<boolean> ;
 
-  validateUserInput?: (ctx: CommandContext, ...args: any[]) => Promise<boolean> | boolean;
+  validateUserInput?: (ctx: CommandContext, ...args: any[]) => Promise<boolean> ;
 }
 
 /**
