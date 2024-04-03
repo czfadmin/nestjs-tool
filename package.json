@@ -1,184 +1,347 @@
 {
-	"name": "nestjs-tool",
-	"displayName": "NestJS Tool",
-	"publisher": "czfadmin",
-	"description": "Quickly create NestJS Files tool",
-	"version": "0.1.2",
-	"engines": {
-		"vscode": "^1.52.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"icon": "images/icon.png",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/czfadmin/nestjs-tool"
-	},
-	"bugs": {
-		"url": "https://github.com/czfadmin/nestjs-tool/issues",
-		"email": "abchen9527@outlook.com"
-	},
-	"activationEvents": [
-		"onCommand:extension.GenerateNestJsModule",
-		"onCommand:extension.GenerateNestJsService",
-		"onCommand:extension.GenerateNestJsController",
-		"onCommand:extension.GenerateNestJsException",
-		"onCommand:extension.GenerateNestJsMiddleware",
-		"onCommand:extension.GenerateNestJsInterceptor",
-		"onCommand:extension.GenerateNestJsPipe",
-		"onCommand:extension.GenerateNestJsGuard",
-		"onCommand:extension.GenerateNestJsDecorator",
-		"onCommand:extension.GenerateNestJsExcepFilter",
-		"onCommand:extension.GenerateNestJsUnitTest",
-		"onCommand:extension.GenerateNestModuleFolder"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"configuration": {
-			"title": "nestjs-tool"
-		},
-		"commands": [
-			{
-				"command": "extension.GenerateNestJsModule",
-				"title": "NestJSTool - Generate Module"
-			},
-			{
-				"command": "extension.GenerateNestJsService",
-				"title": "NestJSTool - Generate Service"
-			},
-			{
-				"command": "extension.GenerateNestJsController",
-				"title": "NestJSTool - Generate Controller"
-			},
-			{
-				"command": "extension.GenerateNestJsException",
-				"title": "NestJSTool - Generate Exception"
-			},
-			{
-				"command": "extension.GenerateNestJsMiddleware",
-				"title": "NestJSTool - Generate Middleware"
-			},
-			{
-				"command": "extension.GenerateNestJsInterceptor",
-				"title": "NestJSTool - Generate Interceptor"
-			},
-			{
-				"command": "extension.GenerateNestJsPipe",
-				"title": "NestJSTool - Generate Pipe"
-			},
-			{
-				"command": "extension.GenerateNestJsGuard",
-				"title": "NestJSTool - Generate Guard"
-			},
-			{
-				"command": "extension.GenerateNestJsDecorator",
-				"title": "NestJSTool - Generate Decorator"
-			},
-			{
-				"command": "extension.GenerateNestJsExcepFilter",
-				"title": "NestJSTool - Generate Exception Filter"
-			},
-			{
-				"command": "extension.GenerateNestJsUnittest",
-				"title": "NestJSTool - Generate Unit Test"
-			},
-			{
-				"command": "extension.GenerateNestModuleFolder",
-				"title": "NestJSTool - Generate Module Folder"
-			}
-		],
-		"menus": {
-			"explorer/context": [
-				{
-					"command": "extension.GenerateNestJsModule",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestModuleFolder",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsService",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsController",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsException",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsMiddleware",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsInterceptor",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsPipe",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsGuard",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsDecorator",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsExcepFilter",
-					"when": "explorerResourceIsFolder",
-					"group": "2_workspace"
-				},
-				{
-					"command": "extension.GenerateNestJsUnittest",
-					"when": "!explorerResourceIsFolder",
-					"group": "2_workspace"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js",
-		"package": "cp -r src/templates ./out && vsce package"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.52.0",
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.0.4",
-		"@types/node": "^12.11.7",
-		"@types/fs-extra": "^9.0.6",
-		"@types/mustache": "^4.1.0",
-		"eslint": "^7.15.0",
-		"@typescript-eslint/eslint-plugin": "^4.9.0",
-		"@typescript-eslint/parser": "^4.9.0",
-		"glob": "^7.1.6",
-		"mocha": "^8.1.3",
-		"typescript": "^4.1.2",
-		"vscode-test": "^1.4.1"
-	},
-	"dependencies": {
-		"fs-extra": "^9.0.1",
-		"mustache": "^4.1.0"
-	}
+  "name": "nestjs-tool",
+  "displayName": "NestJS Tool",
+  "publisher": "czfadmin",
+  "description": "Quickly create NestJS Files tool",
+  "version": "0.1.2",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "NestJS"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/czfadmin/nestjs-tool"
+  },
+  "bugs": {
+    "url": "https://github.com/czfadmin/nestjs-tool/issues",
+    "email": "abchen9527@outlook.com"
+  },
+  "activationEvents": [
+    "workspaceContains:**/nest-cli.json",
+    "workspaceContains:**/.nest-cli.json",
+    "workspaceContains:**/.nest-cli.json",
+    "workspaceContains:**/nest.json"
+  ],
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "icon": "images/icon.png",
+  "contributes": {
+    "configuration": {
+      "title": "NestJS Tool",
+      "properties": {
+        "showTerminal": {
+          "type": "boolean",
+          "default": true,
+          "description": "%nestjs-tool.showTerminal%"
+        },
+        "shouldExecute": {
+          "type": "boolean",
+          "default": true,
+          "description": "%nestjs-tool.shouldExecute%"
+        },
+        "noSpec": {
+          "type": "boolean",
+          "default": false,
+          "description": "%nestjs-tool.noSpec%"
+        },
+        "spec": {
+          "type": "boolean",
+          "default": true,
+          "description": "%nestjs-tool.spec%"
+        },
+        "noFlat": {
+          "type": "boolean",
+          "default": false,
+          "description": "%nestjs-tool.noFlat%"
+        },
+        "flat": {
+          "type": "boolean",
+          "default": true,
+          "description": "%nestjs-tool.flat%"
+        },
+        "skipImport": {
+          "type": "boolean",
+          "default": false,
+          "description": "%nestjs-tool.skipImport%"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "nestjs-tool.generateANewApplicationWorkspace",
+        "title": "%nestjs-tool.generateANewApplicationWorkspace%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateANewClass",
+        "title": "%nestjs-tool.generateANewClass%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateACliConfigurationFile",
+        "title": "%nestjs-tool.generateACliConfigurationFile%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAContorllerDeclaration",
+        "title": "%nestjs-tool.generateAContorllerDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateACustomDecorator",
+        "title": "%nestjs-tool.generateACustomDecorator%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAFilterDeclaration",
+        "title": "%nestjs-tool.generateAFilterDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAGatewayDeclaration",
+        "title": "%nestjs-tool.generateAGatewayDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAGuardDelcaration",
+        "title": "%nestjs-tool.generateAGuardDelcaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAnInterceptorDeclaration",
+        "title": "%nestjs-tool.generateAnInterceptorDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAnInterface",
+        "title": "%nestjs-tool.generateAnInterface%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateANewLibraryWithAMonorepo",
+        "title": "%nestjs-tool.generateANewLibraryWithAMonorepo%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAMiddlewareDeclaration",
+        "title": "%nestjs-tool.generateAMiddlewareDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAModuleDeclaration",
+        "title": "%nestjs-tool.generateAModuleDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAPipeDeclaration",
+        "title": "%nestjs-tool.generateAPipeDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAGraphQLResolverDeclaration",
+        "title": "%nestjs-tool.generateAGraphQLResolverDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateANewCRUDDeclaration",
+        "title": "%nestjs-tool.generateANewCRUDDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateAServiceDeclaration",
+        "title": "%nestjs-tool.generateAServiceDeclaration%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.generateANewApplicationWithAMonorepo",
+        "title": "%nestjs-tool.generateANewApplicationWithAMonorepo%",
+        "category": "NestJS Tool"
+      },
+      {
+        "command": "nestjs-tool.quickOperation",
+        "title": "%nestjs-tool.quickOperation%",
+        "category": "NestJS Tool"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "submenu": "nestjs-tool-menus",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        }
+      ],
+      "nestjs-tool-menus": [
+        {
+          "command": "nestjs-tool.generateANewApplicationWorkspace",
+          "when": "explorerResourceIsFolder ",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateANewClass",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateACliConfigurationFile",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAContorllerDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateACustomDecorator",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAFilterDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAGatewayDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAGuardDelcaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAnInterceptorDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAnInterface",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateANewLibraryWithAMonorepo",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAMiddlewareDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAModuleDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAPipeDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAGraphQLResolverDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateANewCRUDDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateAServiceDeclaration",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        },
+        {
+          "command": "nestjs-tool.generateANewApplicationWithAMonorepo",
+          "when": "explorerResourceIsFolder",
+          "group": "2_workspace"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "nestjs-tool.generateACliConfigurationFile",
+          "when": "!nestjs-tool.selectedModule || !nestjs-tool.selectedProject || !nestjs-tool.selectedApp"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "nestjs-tool-menus",
+        "label": "NestJS Tool"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn compile",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "package": "cp -r src/templates ./out &&webpack --mode production --devtool hidden-source-map",
+    "version": "changeset version",
+    "change": "changeset",
+    "bump": "changeset publish",
+    "pretest": "yarn build && yarn lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "prettier": "prettier --fix  -w  ./src/**/*.{js,ts} ",
+    "publish:beta": "vsce package --pre-release",
+    "publish": "vsce publish",
+    "lint-staged": "lint-staged",
+    "l10n": "node ./node_modules/@vscode/l10n-dev/dist/cli.js export -o ./l10n ./src",
+    "release": "release-it",
+    "prepare": "husky",
+    "commitlint": "commitlint --edit $1"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^19.2.1",
+    "@commitlint/config-angular": "^19.1.0",
+    "@release-it/conventional-changelog": "^8.0.1",
+    "@swc/core": "^1.4.8",
+    "@types/fs-extra": "^9.0.6",
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^8.0.4",
+    "@types/mustache": "^4.1.0",
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.52.0",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "@vscode/l10n-dev": "^0.0.34",
+    "eslint": "^7.15.0",
+    "glob": "^7.1.6",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "mocha": "^8.1.3",
+    "prettier": "^3.2.5",
+    "release-it": "^17.1.1",
+    "swc-loader": "^0.2.6",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.1.2",
+    "vscode-test": "^1.4.1",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "fs-extra": "^9.0.1",
+    "mustache": "^4.1.0"
+  },
+  "license": "MIT",
+  "packageManager": "yarn@1.22.19",
+  "lint-staged": {
+    "*.{js,ts}": [
+      "yarn lint",
+      "prettier --write"
+    ]
+  }
 }
