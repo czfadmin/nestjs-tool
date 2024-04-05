@@ -283,7 +283,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "yarn compile",
+    "vscode:prepublish": "yarn build",
     "build": "webpack",
     "watch": "webpack --watch",
     "package": "cp -r src/templates ./out &&webpack --mode production --devtool hidden-source-map",
