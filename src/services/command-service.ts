@@ -15,7 +15,9 @@ import {
 } from '../constants';
 import {COMMANDS} from '../constants';
 import {
+  checkoutFolderIsModule,
   getModulesQuickPick,
+  getModulesQuickPick2,
   getProjectFromUri,
   resolve,
   showCommandsQuickPick,
@@ -95,7 +97,7 @@ export default class CommandService implements Disposable {
           }
 
           application = await getApplicationFromUri(fileUri);
-          
+
           if (!isConfigCmd) {
             project = await getProjectFromUri(fileUri, application);
 
@@ -116,10 +118,22 @@ export default class CommandService implements Disposable {
           }
         }
 
-        if (!isConfigCmd) {
-          // 从app中选取模块进行将生成的文件添加到指定的模块中
-          selectedModule = await getModulesQuickPick(application!, project);
+        // 获取从当前文件夹中创建的是否存在多个模块, 如果是模块, 直接在此某块块中创建, 反之选择模块
+        const modules = await checkoutFolderIsModule(
+          'fsPath' in args[0] ? args[0] : undefined,
+        );
 
+        if ((modules && modules.length) || (!isConfigCmd && !modules)) {
+          if (modules && modules.length) {
+            selectedModule = await getModulesQuickPick2(modules);
+          } else {
+            // 从app中选取模块进行将生成的文件添加到指定的模块中
+            selectedModule = await getModulesQuickPick(application!, project);
+          }
+
+          if (!selectedModule) {
+            return;
+          }
           userInput = this._buildCommand(
             cmd,
             userInput,
@@ -191,7 +205,8 @@ export default class CommandService implements Disposable {
       !_userInput.startsWith('-') &&
       module &&
       module.name &&
-      module.name !== 'None'
+      module.name !== 'None' &&
+      module.name !== 'app'
     ) {
       _userInput = `${module.name}/${_userInput}`;
     }
@@ -265,6 +280,7 @@ export default class CommandService implements Disposable {
       sendText = `cd ${distPath} && ${sendText}`;
     }
     this._terminal.sendText(sendText);
+
     if (showTerminal) {
       this._terminal.show();
     }

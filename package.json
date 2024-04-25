@@ -333,6 +333,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "fast-glob": "^3.3.2",
     "fs-extra": "^9.0.1",
     "mustache": "^4.1.0"
   },
