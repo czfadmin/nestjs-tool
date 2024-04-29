@@ -84,8 +84,12 @@ export async function showProjectQuickPick(application: INestApplication) {
   const projects = await getAllNestProjects(application);
   const pickitems = getAllNestProjectPickItems(projects);
 
+  if (!pickitems.length) {
+    return;
+  }
+
   const selectedItem = await window.showQuickPick(pickitems, {
-    placeHolder:l10n.t("Please select a project"),
+    placeHolder: l10n.t('Please select a project'),
     matchOnDescription: true,
     matchOnDetail: true,
   });

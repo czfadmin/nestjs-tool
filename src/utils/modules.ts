@@ -1,8 +1,11 @@
 import fs from 'node:fs';
-import {IModule, INestApplication, INestProject} from '../types/nest-cli';
 import {l10n, QuickPickItem, Uri, window} from 'vscode';
+import fg from 'fast-glob';
+import {IModule, INestApplication, INestProject} from '../types/nest-cli';
 import {joinPath, resolve} from './path';
 import {statSync} from './fs';
+import {getApplicationFromUri} from './application';
+import {getProjectFromUri} from './project';
 
 /**
  * 列出指定项目(存在)的所有的模块
@@ -19,11 +22,21 @@ export function getAllModules(
     project ? project.root! : '',
     'src',
   );
+
   const allFiles = fs.readdirSync(targetPath);
 
   // 遍历目录下方的文件夹中是否存在module.ts/js 文件
   for (const file of allFiles) {
     const filePath = resolve(targetPath, file);
+    if (file === 'app.module.ts') {
+      modules.push({
+        name: 'app',
+        moduleRoot: project ? `${project.sourceRoot}/app` : 'app',
+        moduleEntry: `${project ? project.sourceRoot + '/' : ''}app.module.ts`,
+        project: project,
+      });
+      continue;
+    }
     if (statSync(filePath).isFile()) {
       continue;
     }
@@ -71,8 +84,19 @@ export async function getModulesQuickPick(
     return;
   }
 
+  return await getModulesQuickPick2(modules);
+}
+
+export async function getModulesQuickPick2(modules: IModule[]) {
+  if (modules.length === 0) {
+    return;
+  }
+  if (modules.length === 1) {
+    return modules[0];
+  }
+
   const moduleQuickItems = getModulePickItems(modules);
-  // 如果选择了一个module 将会在生成命令的时候追加到指定的module中
+  // 如果选择了一个module将会在生成命令的时候追加到指定的module中
   const selectedModule = await window.showQuickPick(moduleQuickItems, {
     placeHolder: l10n.t('Please select a module'),
     matchOnDescription: true,
@@ -81,5 +105,45 @@ export async function getModulesQuickPick(
   if (!selectedModule) {
     return;
   }
+
+  if (selectedModule.label === 'None') {
+    return modules[0];
+  }
   return modules.find(module => module.name === selectedModule.label);
+}
+
+export async function checkoutFolderIsModule(p?: Uri) {
+  if (!p) {
+    return;
+  }
+
+  if (fs.statSync(p.fsPath).isFile()) {
+    return;
+  }
+
+  let _modules: IModule[] = [];
+
+  const entries = fg.globSync([`**/*.module.(t|j)s`], {
+    cwd: p.fsPath,
+    deep: 2,
+    dot: false,
+    absolute: true,
+  });
+
+  if (entries.length) {
+    const application = await getApplicationFromUri(p);
+    const project = await getProjectFromUri(p, application);
+    for (let entry of entries) {
+      const arr = entry.split('/');
+      const name = arr[arr.length - 1].split('.')[0];
+      _modules.push({
+        name,
+        moduleRoot: p.fsPath,
+        moduleEntry: entry,
+        project: project,
+      });
+    }
+  }
+  console.log(_modules);
+  return _modules;
 }
