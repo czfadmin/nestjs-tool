@@ -1,11 +1,12 @@
 import fs from 'node:fs';
-import {l10n, QuickPickItem, Uri, window} from 'vscode';
+import {l10n, QuickPickItem, Uri, window, workspace} from 'vscode';
 import fg from 'fast-glob';
 import {IModule, INestApplication, INestProject} from '../types/nest-cli';
 import {joinPath, resolve} from './path';
 import {statSync} from './fs';
 import {getApplicationFromUri} from './application';
 import {getProjectFromUri} from './project';
+import path from 'node:path';
 
 /**
  * 列出指定项目(存在)的所有的模块
@@ -112,20 +113,31 @@ export async function getModulesQuickPick2(modules: IModule[]) {
   return modules.find(module => module.name === selectedModule.label);
 }
 
-export async function checkoutFolderIsModule(p?: Uri) {
+/**
+ *
+ * @param project 用户选择的子项目
+ * @param p 选择的文件上下文, 当直接在资源管理器视图中右键操作为undefined
+ * @returns
+ */
+export async function checkoutFolderIsModule(project?: INestProject, p?: Uri) {
   if (!p) {
-    return;
+    return [];
   }
 
   if (fs.statSync(p.fsPath).isFile()) {
-    return;
+    return [];
   }
 
   let _modules: IModule[] = [];
 
+  // 从当前的项目中的sourceRoot下选择对应的module出来
+  const cwd = !project
+    ? p.fsPath
+    : Uri.joinPath(project.workspace.uri, project.root || '').fsPath;
+
   const entries = fg.globSync([`**/*.module.(t|j)s`], {
-    cwd: p.fsPath,
-    deep: 2,
+    cwd: cwd,
+    deep: 4,
     dot: false,
     absolute: true,
   });
@@ -144,6 +156,5 @@ export async function checkoutFolderIsModule(p?: Uri) {
       });
     }
   }
-  console.log(_modules);
   return _modules;
 }

@@ -4,8 +4,8 @@ import {getAllNestOptions} from './options';
 import {resolve} from './path';
 
 /**
- * 通过读取nest-cli.json文件判断工作文件中是否存在多个project
- * @returns {[boolean, any[]]}
+ * 通过读取nest-cli.json文件, 判断工作文件中是否存在并返回对饮的多个project
+ * @returns {[boolean, INestProject[]]}
  */
 export async function getAllNestProjects(
   application?: INestApplication,
