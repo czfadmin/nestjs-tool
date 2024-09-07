@@ -308,8 +308,11 @@ export default class CommandService implements Disposable {
         window.onDidEndTerminalShellExecution(e => {
           if (e.execution === this._execution) {
             this._logger.info(
-              `execute command successfully!`,
+              `Command executed successfully!`,
               e.execution.commandLine,
+            );
+            window.showInformationMessage(
+              `The \`${commandLine}\` was executed successfully!`,
             );
           }
         }),
