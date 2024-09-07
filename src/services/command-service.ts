@@ -4,6 +4,7 @@ import {
   ExtensionContext,
   l10n,
   Terminal,
+  TerminalShellExecution,
   Uri,
   window,
 } from 'vscode';
@@ -39,9 +40,13 @@ import {LoggerService} from './logger-service';
 export default class CommandService implements Disposable {
   private _context: ExtensionContext;
 
-  private _terminal: Terminal;
+  private _terminal?: Terminal;
+
+  private _execution: TerminalShellExecution | null = null;
 
   private _logger: LoggerService;
+
+  private _disposers: Disposable[] = [];
   private get configuration() {
     return this.sm.configService.configuration;
   }
@@ -52,12 +57,25 @@ export default class CommandService implements Disposable {
     this._context = this.sm.context;
     this._logger = LoggerService.createFactory(CommandService);
 
-    this._terminal =
-      window.terminals.find(it => it.name == EXTENSION_TERMINAL_NAME) ||
-      window.createTerminal({
+    this._terminal = window.terminals.find(
+      it => it.name == EXTENSION_TERMINAL_NAME,
+    );
+
+    if (!this._terminal) {
+      this._terminal = window.createTerminal({
         name: EXTENSION_TERMINAL_NAME,
         hideFromUser: shouldExecute,
       });
+    }
+
+    // 判断当前的是否为之前打开的nestjstool的terminal
+    this._disposers.push(
+      window.onDidCloseTerminal(t => {
+        if (t.name === EXTENSION_TERMINAL_NAME) {
+          this._terminal = undefined;
+        }
+      }),
+    );
 
     this._initial();
   }
@@ -99,6 +117,7 @@ export default class CommandService implements Disposable {
           application = await getApplicationFromUri(fileUri);
 
           if (!isConfigCmd) {
+            // 当有多个子项目的时候, 选中其中一个Project然后继续操作
             project = await getProjectFromUri(fileUri, application);
 
             if (!project && application) {
@@ -120,6 +139,7 @@ export default class CommandService implements Disposable {
 
         // 获取从当前文件夹中创建的是否存在多个模块, 如果是模块, 直接在此某块块中创建, 反之选择模块
         const modules = await checkoutFolderIsModule(
+          project,
           'fsPath' in args[0] ? args[0] : undefined,
         );
 
@@ -179,6 +199,8 @@ export default class CommandService implements Disposable {
 
   /**
    * 判断用户的输入内容,并结合用户的配置,生成最终的命令
+   *
+   *
    * @param userInput 用户输入的内容
    * @returns 处理后的用户输入
    */
@@ -262,33 +284,51 @@ export default class CommandService implements Disposable {
     ...args: any[]
   ) {
     const {showTerminal, shouldExecute} = this.sm.configService.configuration;
-    if (
-      this._terminal.exitStatus &&
-      this._terminal.exitStatus.code === undefined
-    ) {
+    if (!this._terminal) {
       this._terminal = window.createTerminal({
         name: EXTENSION_TERMINAL_NAME,
         hideFromUser: shouldExecute,
       });
     }
-    let sendText = `nest g ${alias} ${args.join(' ')}`;
+
+    let commandLine = `nest g ${alias} ${args.join(' ')}`;
     if (application) {
       const distPath = resolve(
         application.workspace.uri.fsPath,
         application.name === 'root' ? '' : application.name,
       );
-      sendText = `cd ${distPath} && ${sendText}`;
+      commandLine = `cd ${distPath} && ${commandLine}`;
     }
-    this._terminal.sendText(sendText);
+
+    if (this._terminal.shellIntegration) {
+      this._execution =
+        this._terminal.shellIntegration.executeCommand(commandLine);
+
+      this._disposers.push(
+        window.onDidEndTerminalShellExecution(e => {
+          if (e.execution === this._execution) {
+            this._logger.info(
+              `execute command successfully!`,
+              e.execution.commandLine,
+            );
+          }
+        }),
+      );
+    } else {
+      this._terminal.sendText(commandLine);
+    }
 
     if (showTerminal) {
       this._terminal.show();
     }
-    this._logger.info(`execute command: ${sendText}`);
+    this._logger.info(`execute command: ${commandLine}`);
   }
 
   dispose() {
-    this._terminal.dispose();
+    for (const d of this._disposers) {
+      d.dispose();
+    }
+    this._terminal?.dispose();
     this._context.subscriptions.forEach(it => it.dispose());
   }
 }

@@ -1,11 +1,12 @@
 import fs from 'node:fs';
-import {l10n, QuickPickItem, Uri, window} from 'vscode';
+import {l10n, QuickPickItem, Uri, window, workspace} from 'vscode';
 import fg from 'fast-glob';
 import {IModule, INestApplication, INestProject} from '../types/nest-cli';
 import {joinPath, resolve} from './path';
 import {statSync} from './fs';
 import {getApplicationFromUri} from './application';
 import {getProjectFromUri} from './project';
+import path from 'node:path';
 
 /**
  * 列出指定项目(存在)的所有的模块
@@ -112,7 +113,7 @@ export async function getModulesQuickPick2(modules: IModule[]) {
   return modules.find(module => module.name === selectedModule.label);
 }
 
-export async function checkoutFolderIsModule(p?: Uri) {
+export async function checkoutFolderIsModule(project?: INestProject, p?: Uri) {
   if (!p) {
     return;
   }
@@ -123,9 +124,10 @@ export async function checkoutFolderIsModule(p?: Uri) {
 
   let _modules: IModule[] = [];
 
+  // 从当前的项目中的sourceRoot下选择对应的module出来
   const entries = fg.globSync([`**/*.module.(t|j)s`], {
-    cwd: p.fsPath,
-    deep: 2,
+    cwd: !project ? p.fsPath : Uri.joinPath(p, project.name).fsPath,
+    deep: 4,
     dot: false,
     absolute: true,
   });
